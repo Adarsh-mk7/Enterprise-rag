@@ -2,6 +2,12 @@ import os
 import sys
 import uuid
 import json
+
+# Ensure console handles UTF-8 (emojis in logfire spans) without UnicodeEncodeError on Windows
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8")
+if hasattr(sys.stderr, "reconfigure"):
+    sys.stderr.reconfigure(encoding="utf-8")
 import logfire
 
 from qdrant_client import QdrantClient
@@ -14,7 +20,7 @@ from app.ingestion.loaders.html import parse_html
 from app.ingestion.loaders.text import parse_text
 from app.ingestion.chunking.splitter import chunk_text
 
-logfire.configure(service_name="enterprise-ingestion-service")
+logfire.configure(service_name="enterprise-ingestion-service", send_to_logfire="if-token-present")
 
 # Local folder where parsed + chunked JSON metadata is saved (replaces GCS processed bucket)
 PROCESSED_DATA_DIR = "processed_data"
